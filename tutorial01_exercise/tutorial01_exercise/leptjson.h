@@ -31,6 +31,12 @@ typedef struct {
   lept_type type;
 } lept_value;
 
+typedef struct {
+  const char* json;
+} lept_context;
+
+
+
 int lept_parse(lept_value* v, const char* json);
 
 lept_type lept_get_type(const lept_value* v);
