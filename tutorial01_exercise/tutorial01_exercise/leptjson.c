@@ -51,9 +51,21 @@ static int lept_parse_false(lept_context *c, lept_value *v) {
   return LEPT_PARSE_OK;
 }
 
+static int lept_parse_number(lept_context *c, lept_value *v) {
+  char *endptr;
+  // TODO: validate number in JSON format
+  v->n = strtod(c->json, &endptr);
+  if (c->json == endptr) {
+    return LEPT_PARSE_INVALID_VALUE;
+  }
+  c->json = endptr;
+  v->type = LEPT_NUMBER;
+  return LEPT_PARSE_OK;
+}
+
 /* false = "false */
 
-/* value = null / false / true */
+/* value = null / false / true / number */
 /* 提示：下面代码没处理 false / true，将会是练习之一 */
 static int lept_parse_value(lept_context *c, lept_value *v) {
   switch (*(c->json)) {
@@ -66,7 +78,7 @@ static int lept_parse_value(lept_context *c, lept_value *v) {
     case '\0':
       return LEPT_PARSE_EXPECT_VALUE;
     default:
-      return LEPT_PARSE_INVALID_VALUE;
+      return lept_parse_number(c, v);
   }
 }
 
@@ -91,6 +103,9 @@ lept_type lept_get_type(const lept_value* v) {
   return v->type;
 }
 
-
+double lept_get_number(const lept_value* v) {
+  assert(v != NULL && v->type == LEPT_NUMBER);
+  return v->n;
+}
 
 
